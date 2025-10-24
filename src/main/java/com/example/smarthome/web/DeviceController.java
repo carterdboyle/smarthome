@@ -1,12 +1,10 @@
 package com.example.smarthome.web;
 
+import com.example.smarthome.domain.AirConditioner;
 import com.example.smarthome.service.DeviceService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/devices")
@@ -17,7 +15,36 @@ public class DeviceController {
     @GetMapping
     public String list(Model model) {
         model.addAttribute("devices", service.listAll());
+        model.addAttribute("acModes", AirConditioner.Mode.values());
         return "devices/index";
+    }
+
+    // LIGHT
+    @PostMapping("/{id}/light/switch")
+    public String lightSwitch(@PathVariable Long id, @RequestParam("on") boolean on) {
+        service.setLightSwitch(id, on);
+        return "redirect:/devices";
+    }
+
+    // FAN
+    @PostMapping("/{id}/fan/speed")
+    public String fanSpeed(@PathVariable Long id, @RequestParam("speed") int speed) {
+        service.setFanSpeed(id, speed);
+        return "redirect:/devices";
+    }
+
+    // AC Mode
+    @PostMapping("/{id}/ac/mode")
+    public String acMode(@PathVariable Long id, @RequestParam("mode") AirConditioner.Mode mode) {
+        service.setAcMode(id, mode);
+        return "redirect:/devices";
+    }
+
+    // AC Setpoint
+    @PostMapping("/{id}/ac/setpoint")
+    public String acSetpoint(@PathVariable Long id, @RequestParam("setpointC") int setpointC) {
+        service.setAcSetpoint(id, setpointC);
+        return "redirect:/devices";
     }
 
     @PostMapping("/{id}/off")
