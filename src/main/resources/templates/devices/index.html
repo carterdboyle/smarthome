@@ -5,17 +5,74 @@
     <title>Smart Home</title>
     <meta charset="UTF-8" />
     <style>
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ddd; padding: 8px; }
-        th { text-align: left; background: #f5f5f5; }
-        form.inline { display: inline-block; margin-right: .5rem; }
+        :root {
+            --gap: 8px;
+        }
+        html, body { margin: 0;, padding: 0; }
+        body {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+            Arial, "Noto Sans", "Liberation sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            line-height: 1.35;
+            padding: 24px;
+            background: #fafafa;
+            color: #222;
+        }
+        h1 {
+            margin: 0 0 16px;
+            font-weight: 600;
+        }
+        .flash {
+            margin: 0 0 16px;
+            padding: 10px 12px;
+            background: #eef8ff;
+            border: 1px solid #bfe3ff;
+            border-radius: 6px;
+        }
+        table { border-collapse: collapse; width: 100%; background: #fff; border-radius: 8px; overflow: hidden; }
+        th, td { border: 1px solid #ddd; padding: 8px; vertical-align: middle; }
+        th { text-align: left; background: #f5f5f5; font-weight: 600; }
+
+        form.inline { display: inline-block; margin-right: var(--gap); }
         .muted { color: #666; }
+
+        th.action,
+        td.action {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        button {
+            border: 1px solid #d0d7de;
+            background: #f6f8fa;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font: inherit;
+        }
+
+        button:hover { background: #eef1f4; }
+        .btn-danger {
+            border-color: #e5534b;
+            background: #ffefef;
+        }
+        .btn-danger:hover { background: #ffe3e3; }
+
+        /* Footer bar */
+        .footer {
+            margin-top: 16px;
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--gap);
+        }
     </style>
 </head>
 <body>
 <h1>Devices</h1>
+
+<div th:if="${msg}" class="flash" th:text="${msg}"></div>
+
 <table>
-    <thead><tr><th>Name</th><th>Type</th><th>State</th><th>Action</th></tr></thead>
+    <thead><tr><th>Name</th><th>Type</th><th>State</th><th>Controls</th><th class="action">Action</th></tr></thead>
     <tbody>
     <tr th:each="d : ${devices}">
         <td th:text="${d.name}" />
@@ -91,13 +148,20 @@
         </td>
 
         <!-- Universal Off -->
-        <td>
+        <td class="action">
             <form th:action="@{'/devices/' + ${d.id} + '/off'}" method="post">
-                <button type="submit">Turn Off</button>
+                <button type="submit" class="btn-danger">Turn Off</button>
             </form>
         </td>
     </tr>
     </tbody>
 </table>
+
+<div class="footer">
+    <form th:action="@{/devices/off-all}" method="post">
+        <button type="submit" class="btn-danger">TURN ALL OFF</button>
+    </form>
+</div>
+
 </body>
 </html>

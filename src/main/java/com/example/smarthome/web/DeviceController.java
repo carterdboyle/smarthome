@@ -5,6 +5,7 @@ import com.example.smarthome.service.DeviceService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/devices")
@@ -50,6 +51,14 @@ public class DeviceController {
     @PostMapping("/{id}/off")
     public String off(@PathVariable Long id) {
         service.toggleOff(id);
+        return "redirect:/devices";
+    }
+
+    // Turn all off
+    @PostMapping("off-all")
+    public String offAll(RedirectAttributes ra) {
+        service.turnOffAllForUpdate();
+        ra.addFlashAttribute("msg", "All devices turned off.");
         return "redirect:/devices";
     }
 }
