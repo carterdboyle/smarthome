@@ -18,6 +18,9 @@ public class Fan extends Device {
     }
 
     public void setSpeed(int speed) {
+        if (speed < 0 || speed > 2) {
+            throw new IllegalArgumentException("Fan speed must be 0, 1 or 2.");
+        }
         this.speed = speed;
     }
 }
