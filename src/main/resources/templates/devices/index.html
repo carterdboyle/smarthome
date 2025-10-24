@@ -1,10 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Smart Home</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
 </head>
 <body>
-
+<h1>Devices</h1>
+<table>
+    <thead><tr><th>Name</th><th>State</th><th>Action</th></tr></thead>
+    <tbody>
+    <tr th:each="d : ${devices}">
+        <td th:text="#{d.name}">Lamp</td>
+        <td th:text="#{d.type}">LIGHT</td>
+        <td>
+            <span th:switch="${d.type}">
+                <span th:case="'LIGHT'">Switch: <b th:text="${#fields.fieldValue(d, 'switchOn') ? 'ON' : 'OFF'}"></b></span>
+                <span th:case="'FAN'">Speed: <b th:text="${#fields.fieldValue(d, 'speed') ? 'ON' : 'OFF'}"></b></span>
+                <span th:case="AIR_CONDITIONER'">Mode: <b th:text="${#fields.fieldValue(d, 'mode')}"></b></span>
+                <span th:case="*">Unknown</span>
+            </span>
+        </td>
+        <td>
+            <form th:action="@{'/devices/' + ${d.id} + '/off'}" method="POST">
+                <button type="submit">Turn Off</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>
