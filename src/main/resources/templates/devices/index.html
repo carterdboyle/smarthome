@@ -4,26 +4,95 @@
     <meta charset="UTF-8">
     <title>Smart Home</title>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { text-align: left; background: #f5f5f5; }
+        form.inline { display: inline-block; margin-right: .5rem; }
+        .muted { color: #666; }
+    </style>
 </head>
 <body>
 <h1>Devices</h1>
 <table>
-    <thead><tr><th>Name</th><th>State</th><th>Action</th></tr></thead>
+    <thead><tr><th>Name</th><th>Type</th><th>State</th><th>Action</th></tr></thead>
     <tbody>
     <tr th:each="d : ${devices}">
-        <td th:text="#{d.name}">Lamp</td>
-        <td th:text="#{d.type}">LIGHT</td>
+        <td th:text="${d.name}" />
+        <td th:text="${d.type}" />
+
+        <!-- Readable state -->
         <td>
-            <span th:switch="${d.type}">
-                <span th:case="'LIGHT'">Switch: <b th:text="${#fields.fieldValue(d, 'switchOn') ? 'ON' : 'OFF'}"></b></span>
-                <span th:case="'FAN'">Speed: <b th:text="${#fields.fieldValue(d, 'speed') ? 'ON' : 'OFF'}"></b></span>
-                <span th:case="AIR_CONDITIONER'">Mode: <b th:text="${#fields.fieldValue(d, 'mode')}"></b></span>
-                <span th:case="*">Unknown</span>
+            <span th:switch="${d.type.name()}">
+              <span th:case="'LIGHT'">
+                Switch: <b th:text="${d.switchOn} ? 'ON' : 'OFF'" />
+              </span>
+              <span th:case="'FAN'">
+                Speed: <b th:text="${d.speed}" /> <span class="muted">(0=off)</span>
+              </span>
+              <span th:case="'AIR_CONDITIONER'">
+                Mode: <b th:text="${d.mode}" />,
+                Setpoint: <b th:text="${d.setpointC}" /></b> °C
+              </span>
+              <span th:case="*">—</span>
             </span>
         </td>
+
+        <!-- Controls -->
         <td>
-            <form th:action="@{'/devices/' + ${d.id} + '/off'}" method="POST">
+            <!-- LIGHT controls -->
+            <div th:if="${d.type.name() == 'LIGHT'}">
+                <form class="inline" th:action="@{'/devices/' + ${d.id} + '/light/switch'}" method="post">
+                    <input type="hidden" name="on" value="true"/>
+                    <button type="submit">Switch ON</button>
+                </form>
+                <form class="inline" th:action="@{'/devices/' + ${d.id} + '/light/switch'}" method="post">
+                    <input type="hidden" name="on" value="false"/>
+                    <button type="submit">Switch OFF</button>
+                </form>
+            </div>
+
+            <!-- FAN controls -->
+            <div th:if="${d.type.name() == 'FAN'}">
+                <form class="inline" th:action="@{'/devices/' + ${d.id} + '/fan/speed'}" method="post">
+                    <label>Speed:
+                        <select name="speed">
+                            <option value="0" th:selected="${d.speed == 0}">0</option>
+                            <option value="1" th:selected="${d.speed == 1}">1</option>
+                            <option value="2" th:selected="${d.speed == 2}">2</option>
+                        </select>
+                    </label>
+                    <button type="submit">Apply</button>
+                </form>
+            </div>
+
+            <!-- AC controls -->
+            <div th:if="${d.type.name() == 'AIR_CONDITIONER'}">
+                <form class="inline" th:action="@{'/devices/' + ${d.id} + '/ac/mode'}" method="post">
+                    <label>Mode:
+                        <select name="mode">
+                            <option th:each="m : ${acModes}"
+                                    th:value="${m}"
+                                    th:text="${m}"
+                                    th:selected="${m == d.mode}">
+                            </option>
+                        </select>
+                    </label>
+                    <button type="submit">Set Mode</button>
+                </form>
+
+                <form class="inline" th:action="@{'/devices/' + ${d.id} + '/ac/setpoint'}" method="post">
+                    <label>Setpoint (°C):
+                        <input type="number" name="setpointC" min="16" max="30" th:value="${d.setpointC}"/>
+                    </label>
+                    <button type="submit">Set Temp</button>
+                </form>
+            </div>
+        </td>
+
+        <!-- Universal Off -->
+        <td>
+            <form th:action="@{'/devices/' + ${d.id} + '/off'}" method="post">
                 <button type="submit">Turn Off</button>
             </form>
         </td>
