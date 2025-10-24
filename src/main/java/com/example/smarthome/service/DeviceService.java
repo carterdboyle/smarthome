@@ -17,10 +17,10 @@ public class DeviceService {
 
     public List<Device> listAll() { return repo.findAll(); }
 
-    public void setLightSwitch(Long id, boolean on) {
+    public void toggleLight(Long id) {
         Device d = repo.findById(id).orElseThrow();
         if (!(d instanceof Light l)) throw new IllegalArgumentException("Not a light");
-        l.setSwitchOn(on);
+        l.setSwitchOn(!l.isSwitchOn());
         repo.save(l);
     }
 

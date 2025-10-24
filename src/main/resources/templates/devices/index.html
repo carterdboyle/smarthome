@@ -99,13 +99,8 @@
             <td>
                 <!-- LIGHT controls -->
                 <div th:if="${d.type.name() == 'LIGHT'}">
-                    <form class="inline" th:action="@{'/devices/' + ${d.id} + '/light/switch'}" method="post">
-                        <input type="hidden" name="on" value="true"/>
-                        <button type="submit">Switch ON</button>
-                    </form>
-                    <form class="inline" th:action="@{'/devices/' + ${d.id} + '/light/switch'}" method="post">
-                        <input type="hidden" name="on" value="false"/>
-                        <button type="submit">Switch OFF</button>
+                    <form class="inline" th:action="@{'/devices/' + ${d.id} + '/light/toggle'}" method="post">
+                        <button type="submit" th:text="${d.switchOn} ? 'Turn OFF' : 'Turn ON'">Toggle</button>
                     </form>
                 </div>
 

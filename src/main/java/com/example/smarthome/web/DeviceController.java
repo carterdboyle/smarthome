@@ -37,9 +37,9 @@ public class DeviceController {
     }
 
     // LIGHT
-    @PostMapping("/{id}/light/switch")
-    public String lightSwitch(@PathVariable Long id, @RequestParam("on") boolean on) {
-        service.setLightSwitch(id, on);
+    @PostMapping("/{id}/light/toggle")
+    public String lightSwitch(@PathVariable Long id) {
+        service.toggleLight(id);
         return "redirect:/devices";
     }
 
