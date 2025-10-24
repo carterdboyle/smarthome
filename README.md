@@ -31,7 +31,25 @@ docker compose up -d
 
 This will start:
 
-* PostgreSQL database on port **5332** 
+* PostgreSQL database on port **5332**
+
+If the application crashes it will be due to a missing database, run:
+
+```sh
+docker exec -it postgres-smarthome bash
+```
+
+then from inside the container
+
+```sh
+psql -U postgres
+```
+
+from the PostgreSQL command-line:
+
+```sh
+CREATE DATABASE smarthome;
+```
 
 #### Run the application
 
