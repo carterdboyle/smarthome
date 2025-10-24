@@ -55,8 +55,11 @@ public class DeviceService {
     }
 
     public void turnOffAllForUpdate() {
-        repo.findAll().forEach(Device::turnOff);
-        // Sync with DB
+        List<Device> devices = repo.findAll();
+        for (Device d : devices) {
+            d.turnOff();
+        }
+        repo.saveAll(devices);
         repo.flush();
     }
 }

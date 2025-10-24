@@ -7,17 +7,33 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 @Controller
 @RequestMapping("/devices")
 public class DeviceController {
     private final DeviceService service;
+    private static final ZoneId LOCAL_ZONE = ZoneId.of("America/Moncton");
+
     public DeviceController(DeviceService service) { this.service = service; }
 
     @GetMapping
     public String list(Model model) {
         model.addAttribute("devices", service.listAll());
         model.addAttribute("acModes", AirConditioner.Mode.values());
+
+        ZonedDateTime now = ZonedDateTime.now(LOCAL_ZONE);
+        model.addAttribute("now", now);
+        model.addAttribute("nextRun", nextAnnualRunAfter(now));
+        model.addAttribute("zoneId", LOCAL_ZONE.getId());
         return "devices/index";
+    }
+
+    private static ZonedDateTime nextAnnualRunAfter(ZonedDateTime ref) {
+        ZonedDateTime thisYears = ZonedDateTime.of(ref.getYear(), 1, 1, 1, 0, 0, 0, ref.getZone());
+        if (!ref.isAfter(thisYears)) return thisYears;
+        return thisYears.plusYears(1);
     }
 
     // LIGHT
