@@ -31,7 +31,7 @@ docker compose up -d
 
 This will start:
 
-* PostgreSQL database on port **5432**
+* PostgreSQL database on port **5332** 
 
 #### Run the application
 
